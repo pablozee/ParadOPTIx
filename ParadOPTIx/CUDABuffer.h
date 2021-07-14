@@ -57,4 +57,4 @@ namespace ParadOPTIx {
 		size_t sizeInBytes{ 0 };
 		void* d_ptr{ nullptr };
 	};
-}
+} // ::ParadOPTIx

@@ -11,4 +11,4 @@ namespace ParadOPTIx {
 		uint32_t*	colorBuffer;
 		vec2i		fbSize;
 	};
-}
+} // ::ParadOPTIx
