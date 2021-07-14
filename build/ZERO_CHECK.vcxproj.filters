@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\dev\ParadOPTIx\build\CMakeFiles\fbf54bbe3a717d3a40fe8f358d20a5ca\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CFE3269E-F023-3700-AE1E-39DD8C5A4C0B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

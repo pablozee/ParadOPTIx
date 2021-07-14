@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CMakePredefinedTargets", "CMakePredefinedTargets", "{E2BD05B9-9D3C-3E76-8361-B58F7002493B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLFW3", "GLFW3", "{76EBEB5A-CA1A-30F6-AAC3-9317183597F0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{5B75CB0A-1879-355F-B3C3-8574E58ADC88}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0} = {03DE16E5-EAFF-3376-A475-816A0F81B6A0}
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A} = {D70C5683-ED09-35CE-B1CD-EE438DD32B5A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "INSTALL", "INSTALL.vcxproj", "{5382CE33-354F-3C28-AE29-A0111F174E06}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88} = {5B75CB0A-1879-355F-B3C3-8574E58ADC88}
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0} = {03DE16E5-EAFF-3376-A475-816A0F81B6A0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "..\..\..\..\\ZERO_CHECK.vcxproj", "{03DE16E5-EAFF-3376-A475-816A0F81B6A0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw", "src\glfw.vcxproj", "{D70C5683-ED09-35CE-B1CD-EE438DD32B5A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0} = {03DE16E5-EAFF-3376-A475-816A0F81B6A0}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uninstall", "uninstall.vcxproj", "{357BB5DF-FE42-3BD1-859D-6C56F7FC833C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0} = {03DE16E5-EAFF-3376-A475-816A0F81B6A0}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88}.Debug|x64.ActiveCfg = Debug|x64
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88}.Debug|x64.Build.0 = Debug|x64
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88}.Release|x64.ActiveCfg = Release|x64
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88}.Release|x64.Build.0 = Release|x64
+		{5382CE33-354F-3C28-AE29-A0111F174E06}.Debug|x64.ActiveCfg = Debug|x64
+		{5382CE33-354F-3C28-AE29-A0111F174E06}.Release|x64.ActiveCfg = Release|x64
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0}.Debug|x64.ActiveCfg = Debug|x64
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0}.Debug|x64.Build.0 = Debug|x64
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0}.Release|x64.ActiveCfg = Release|x64
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0}.Release|x64.Build.0 = Release|x64
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A}.Debug|x64.ActiveCfg = Debug|x64
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A}.Debug|x64.Build.0 = Debug|x64
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A}.Release|x64.ActiveCfg = Release|x64
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A}.Release|x64.Build.0 = Release|x64
+		{357BB5DF-FE42-3BD1-859D-6C56F7FC833C}.Debug|x64.ActiveCfg = Debug|x64
+		{357BB5DF-FE42-3BD1-859D-6C56F7FC833C}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5B75CB0A-1879-355F-B3C3-8574E58ADC88} = {E2BD05B9-9D3C-3E76-8361-B58F7002493B}
+		{5382CE33-354F-3C28-AE29-A0111F174E06} = {E2BD05B9-9D3C-3E76-8361-B58F7002493B}
+		{03DE16E5-EAFF-3376-A475-816A0F81B6A0} = {E2BD05B9-9D3C-3E76-8361-B58F7002493B}
+		{D70C5683-ED09-35CE-B1CD-EE438DD32B5A} = {76EBEB5A-CA1A-30F6-AAC3-9317183597F0}
+		{357BB5DF-FE42-3BD1-859D-6C56F7FC833C} = {76EBEB5A-CA1A-30F6-AAC3-9317183597F0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0D1B44B-6A0D-37AB-9BFD-AFFDC207EB61}
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

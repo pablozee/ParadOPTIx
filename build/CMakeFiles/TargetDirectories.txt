@@ -1,0 +1,15 @@
+C:/dev/ParadOPTIx/build/CMakeFiles/INSTALL.dir
+C:/dev/ParadOPTIx/build/CMakeFiles/ALL_BUILD.dir
+C:/dev/ParadOPTIx/build/CMakeFiles/ZERO_CHECK.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/gdt/CMakeFiles/gdt.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/gdt/CMakeFiles/INSTALL.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/gdt/CMakeFiles/ALL_BUILD.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/3rdParty/glfw/CMakeFiles/uninstall.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/3rdParty/glfw/CMakeFiles/INSTALL.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/3rdParty/glfw/CMakeFiles/ALL_BUILD.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/3rdParty/glfw/src/CMakeFiles/glfw.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/3rdParty/glfw/src/CMakeFiles/INSTALL.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/glfWindow/CMakeFiles/glfWindow.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/include/glfWindow/CMakeFiles/INSTALL.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/CMakeFiles/ParadOPTIx.dir
+C:/dev/ParadOPTIx/build/ParadOPTIx/CMakeFiles/INSTALL.dir
