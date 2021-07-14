@@ -6,7 +6,6 @@
 #include <optix_stubs.h>
 #include <sstream>
 #include <stdexcept>
-// TODO May need to include again #include <optix_function_table_definition.h>
 
 #define CUDA_CHECK( call )										\
 	{															\
