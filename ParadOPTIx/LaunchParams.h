@@ -7,8 +7,20 @@ namespace ParadOPTIx {
 
 	struct LaunchParams
 	{
-		int			frameID{ 0 };
-		uint32_t*	colorBuffer;
-		vec2i		fbSize;
+		struct 
+		{
+			uint32_t*	colorBuffer;
+			vec2i		size;
+		} frame;
+
+		struct 
+		{
+			vec3f positon;
+			vec3f direction;
+			vec3f horizontal;
+			vec3f vertical;
+		} camera;
+
+		OptixTraversableHandle traversable;
 	};
 } // ::ParadOPTIx
