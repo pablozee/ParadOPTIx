@@ -281,4 +281,105 @@ namespace ParadOPTIx {
 										    ));
 		if (sizeof_log > 1) PRINT(log);
 	}
+
+	// Constructs the shader binding table
+	void Renderer::buildSBT()
+	{
+		// Build raygen records
+		std::vector<RaygenRecord> raygenRecords;
+
+		for (int i = 0; i < raygenPGs.size(); i++)
+		{
+			RaygenRecord rec;
+			OPTIX_CHECK(optixSbtRecordPackHeader(raygenPGs[i], &rec));
+			rec.data = nullptr;
+			raygenRecords.push_back(rec);
+		}
+		raygenRecordsBuffer.alloc_and_upload(raygenRecords);
+		sbt.raygenRecord = raygenRecordsBuffer.d_pointer();
+
+		// Build miss records
+		std::vector<MissRecord> missRecords;
+
+		for (int i = 0; i < missPGs.size(); i++)
+		{
+			MissRecord rec;
+			OPTIX_CHECK(optixSbtRecordPackHeader(missPGs[i], &rec));
+			rec.data = nullptr;
+			missRecords.push_back(rec);
+		}
+		missRecordsBuffer.alloc_and_upload(missRecords);
+		sbt.missRecordBase				= missRecordsBuffer.d_pointer();
+		sbt.missRecordStrideInBytes		= sizeof(MissRecord);
+		sbt.missRecordCount				= (int)missRecords.size();
+
+		// Build hitgroup records
+		int numObjects = 1;
+
+		std::vector<HitgroupRecord> hitgroupRecords;
+
+		for (int i = 0; i < numObjects; i++)
+		{
+			int objectType = 0;
+			HitgroupRecord rec;
+			OPTIX_CHECK(optixSbtRecordPackHeader(hitgroupPGs[objectType], &rec));
+			rec.objectID = i;
+			hitgroupRecords.push_back(rec);
+		}
+		hitgroupRecordsBuffer.alloc_and_upload(hitgroupRecords);
+		sbt.hitgroupRecordBase				= hitgroupRecordsBuffer.d_pointer();
+		sbt.hitgroupRecordStrideInBytes		= sizeof(HitgroupRecord);
+		sbt.hitgroupRecordCount				= (int)hitgroupRecords.size();
+	}
+
+	// Render one frame
+	void Renderer::render()
+	{
+		// Sanity check - make sure we launch only after first resize is done
+		if (launchParams.fbSize.x == 0) return;
+
+		launchParamsBuffer.upload(&launchParams, 1);
+		launchParams.frameID++;
+
+		OPTIX_CHECK(optixLaunch(
+								// Pipeline we're launching
+								pipeline,
+								cudaStream,
+								// Parameters and SBT
+								launchParamsBuffer.d_pointer(),
+								launchParamsBuffer.sizeInBytes,
+								&sbt,
+								// Dimensions of the launch
+								launchParams.fbSize.x,
+								launchParams.fbSize.y,
+								1
+							  ));
+
+		/**
+		 * Sync - make sure the frame is rendered before we download
+		 * and display. For a high-performance application you want
+		 * to use streams and double-buffering.
+		 */
+		CUDA_SYNC_CHECK();
+	}
+
+	// Resize frame buffer to given resolution
+	void Renderer::resize(const vec2i& newSize)
+	{
+		// If window is minimized
+		if (newSize.x == 0 | newSize.y == 0) return;
+
+		// Resize our cuda frame buffer
+		colorBuffer.resize(newSize.x * newSize.y * sizeof(uint32_t));
+
+		// Update the launch parameters that we'll pass to the optix launch
+		launchParams.fbSize			= newSize;
+		launchParams.colorBuffer	= (uint32_t*)colorBuffer.d_ptr;
+	}
+
+	// Download the rendered color buffer
+	void Renderer::downloadPixels(uint32_t h_pixels[])
+	{
+		colorBuffer.download(h_pixels, launchParams.fbSize.x * launchParams.fbSize.y);
+	}
 }

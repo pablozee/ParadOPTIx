@@ -89,9 +89,9 @@ namespace ParadOPTIx {
 		std::vector<OptixProgramGroup> raygenPGs;
 		std::vector<OptixProgramGroup> missPGs;
 		std::vector<OptixProgramGroup> hitgroupPGs;
-		CUDABuffer					   raygenRecordsBuffers;
-		CUDABuffer					   missRecordsBuffers;
-		CUDABuffer					   hitgroupRecordsBuffers;
+		CUDABuffer					   raygenRecordsBuffer;
+		CUDABuffer					   missRecordsBuffer;
+		CUDABuffer					   hitgroupRecordsBuffer;
 
 		OptixShaderBindingTable		   sbt = {};
 

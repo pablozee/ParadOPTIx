@@ -37,6 +37,13 @@ namespace ParadOPTIx {
 		}
 
 		template<typename T>
+		void alloc_and_upload(const std::vector<T>& vt)
+		{
+			alloc(vt.size() * sizeof(T));
+			upload((const T*)vt.data(), vt.size());
+		}
+
+		template<typename T>
 		void upload(const T* t, size_t count)
 		{
 			assert(d_ptr != nullptr);
