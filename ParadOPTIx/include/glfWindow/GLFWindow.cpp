@@ -17,7 +17,7 @@
 #include "GLFWindow.h"
 
 /*! \namespace osc - Optix Siggraph Course */
-namespace osc {
+namespace ParadOPTIx {
   using namespace gdt;
   
   static void glfw_error_callback(int error, const char* description)
