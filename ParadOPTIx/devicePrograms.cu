@@ -17,16 +17,16 @@ namespace ParadOPTIx {
 	// Will eventually need one pair for each ray type and each geometry type
 	// we want to render
 
-	extern "C" __global__ void __closesthit_radiance()
+	extern "C" __global__ void __closesthit__radiance()
 	{}
 
-	extern "C" __global__ void __anyhit_radiance()
+	extern "C" __global__ void __anyhit__radiance()
 	{}
 
 	// Miss program that gets called for any ray that did not have a
 	// valid intersection
 
-	extern "C" __global__ void __miss_radiance()
+	extern "C" __global__ void __miss__radiance()
 	{}
 
 	// Ray gen program - the actual rendering happens here

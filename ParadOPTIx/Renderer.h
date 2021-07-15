@@ -1,5 +1,4 @@
 #pragma once
-
 #include "CUDABuffer.h"
 #include "LaunchParams.h"
 using namespace ParadOPTIx;

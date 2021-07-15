@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "include/gdt/gdt/gdt.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "include/3rdParty/stb_image_write.h"

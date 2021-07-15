@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="C:\dev\ParadOPTIx\build\ParadOPTIx\cuda_compile_ptx_1_generated_devicePrograms.cu.ptx_embedded.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -9,11 +15,26 @@
     <ClInclude Include="C:\dev\ParadOPTIx\ParadOPTIx\optix7.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\dev\ParadOPTIx\ParadOPTIx\CUDABuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\dev\ParadOPTIx\ParadOPTIx\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="C:\dev\ParadOPTIx\ParadOPTIx\devicePrograms.cu">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\dev\ParadOPTIx\build\CMakeFiles\8476175c5c4d8fe717a42cec84430a50\cuda_compile_ptx_1_generated_devicePrograms.cu.ptx_embedded.c.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
     <CustomBuild Include="C:\dev\ParadOPTIx\ParadOPTIx\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CFE3269E-F023-3700-AE1E-39DD8C5A4C0B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{DF77EB50-8FC7-3F49-A79B-A88A0B9619CD}</UniqueIdentifier>
     </Filter>
