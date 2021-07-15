@@ -33,11 +33,50 @@ namespace ParadOPTIx {
 		int objectID;
 	};
 
+	//! add aligned cube with front-lower-left corner and size
+	void TriangleMesh::addCube(const vec3f& center, const vec3f& size)
+	{
+		affine3f xfm;
+		xfm.p = center - 0.5f * size;
+		xfm.l.vx = vec3f(size.x, 0.f, 0.f);
+		xfm.l.vy = vec3f(0.f, size.y, 0.f);
+		xfm.l.vz = vec3f(0.f, 0.f, size.z);
+		addUnitCube(xfm);
+	}
+
+	/*! add a unit cube (subject to given xfm matrix) to the current
+		triangleMesh */
+	void TriangleMesh::addUnitCube(const affine3f& xfm)
+	{
+		int firstVertexID = (int)vertex.size();
+		vertex.push_back(xfmPoint(xfm, vec3f(0.f, 0.f, 0.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(1.f, 0.f, 0.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(0.f, 1.f, 0.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(1.f, 1.f, 0.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(0.f, 0.f, 1.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(1.f, 0.f, 1.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(0.f, 1.f, 1.f)));
+		vertex.push_back(xfmPoint(xfm, vec3f(1.f, 1.f, 1.f)));
+
+
+		int indices[] = { 0,1,3, 2,3,0,
+						 5,7,6, 5,6,4,
+						 0,4,5, 0,5,1,
+						 2,3,7, 2,7,6,
+						 1,5,7, 1,7,3,
+						 4,0,2, 4,2,6
+		};
+		for (int i = 0; i < 12; i++)
+			index.push_back(firstVertexID + vec3i(indices[3 * i + 0],
+				indices[3 * i + 1],
+				indices[3 * i + 2]));
+	}
+
 	/**
 	 * Constructor - performs all setup, including initializing optix,
 	 * creates module, pipeline, programs, SBT, etc
 	 */
-	Renderer::Renderer()
+	Renderer::Renderer(const TriangleMesh &model)
 	{
 		initOptix();
 
@@ -361,6 +400,19 @@ namespace ParadOPTIx {
 		 * to use streams and double-buffering.
 		 */
 		CUDA_SYNC_CHECK();
+	}
+
+	void Renderer::setCamera(const Camera& camera)
+	{
+		lastSetCamera = camera;
+		launchParams.camera.positon = camera.from;
+		launchParams.camera.direction = normalize(camera.at - camera.from);
+		const float cosFovy = 0.66f;
+		const float aspect = launchParams.frame.size.x / float(launchParams.frame.size.y);
+		launchParams.camera.horizontal =
+			cosFovy * aspect * normalize(cross(launchParams.camera.direction, camera.up));
+		launchParams.camera.vertical =
+			cosFovy * normalize(cross(launchParams.camera.horizontal, launchParams.camera.direction));
 	}
 
 	// Resize frame buffer to given resolution

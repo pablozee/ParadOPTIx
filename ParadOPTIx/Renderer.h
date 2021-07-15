@@ -1,9 +1,33 @@
 #pragma once
 #include "CUDABuffer.h"
 #include "LaunchParams.h"
+#include "gdt/math/AffineSpace.h"
+
 using namespace ParadOPTIx;
 
 namespace ParadOPTIx {
+
+	struct Camera 
+	{
+		vec3f from;
+		vec3f at;
+		vec3f up;
+	};
+
+	// A simple indexed triangle mesh that our renderer will render
+	struct TriangleMesh
+	{
+		// Add a unit cube subject to given xfm matrix to the current 
+		// triangleMesh
+		void addUnitCube(const affine3f& xfm);
+
+		// Add aligned cube with front-lower-left corner and size
+		void addCube(const vec3f& center, const vec3f& size);
+
+		std::vector<vec3f> vertex;
+		std::vector<vec3i> index;
+	};
+
 	/**
 	 * A sample OptiX-7 renderer that demonstrates how to up
 	 * context, module, programs, pipeline, SBT, etc, and perform a
@@ -18,7 +42,7 @@ namespace ParadOPTIx {
 		 * Constructor - performs all setup, including initializing
 		 * optix, creates module, pipeline, programs, SBT, etc
 		 */
-		Renderer();
+		Renderer(const TriangleMesh &model);
 
 		// Render one frame
 		void render();
@@ -28,6 +52,9 @@ namespace ParadOPTIx {
 
 		// Download the rendered color buffer
 		void downloadPixels(uint32_t h_pixels[]);
+
+		// Set camera to render with
+		void setCamera(const Camera& camera);
 
 	protected:
 		// internal helper functions
@@ -60,6 +87,8 @@ namespace ParadOPTIx {
 		// Constructs the shader binding table
 		void buildSBT();
 
+		// Build an acceleration structure for the given triangle mesh
+		OptixTraversableHandle buildAccel(const TriangleMesh& model);
 
 		/**
 		 * CUDA device context and stream that optix pipeline will run on,
@@ -102,5 +131,15 @@ namespace ParadOPTIx {
 		CUDABuffer		launchParamsBuffer;
 
 		CUDABuffer		colorBuffer;
+
+		// The camera we are to render with
+		Camera lastSetCamera;
+
+		// The model we are going to trace rays against
+		const TriangleMesh model;
+		CUDABuffer vertexBuffer;
+		CUDABuffer indexBuffer;
+		// Buffer that keeps the final, compacted acceleration structure
+		CUDABuffer asBuffer;
 	};
 }
