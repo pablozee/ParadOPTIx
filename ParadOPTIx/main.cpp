@@ -105,6 +105,8 @@ namespace ParadOPTIx {
 			// Unit cube centred on top of group plane
 			model.addCube(vec3f(0.f, 0.f, 0.f), vec3f(2.f, 2.f, 2.f));
 
+			model.color = vec3f(.2f, .8f, .2f);
+
 			Camera camera = {/*from*/ vec3f(-10.f, 2.f, -12.f),
 							 /* at */ vec3f(0.f, 0.f, 0.f),
 							 /* up */ vec3f(0.f, 1.f, 0.f) };

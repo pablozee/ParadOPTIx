@@ -1,4 +1,4 @@
-#include "include/gdt/gdt/gdt.h"
+#include "gdt/gdt.h"
 #include "Renderer.h"
 // The following include may only appear in a single source file
 #include <optix_function_table_definition.h>
@@ -30,7 +30,7 @@ namespace ParadOPTIx {
 	{
 		__align__(OPTIX_SBT_RECORD_ALIGNMENT) char header[OPTIX_SBT_RECORD_HEADER_SIZE];
 
-		int objectID;
+		TriangleMeshSBTData data;
 	};
 
 	//! add aligned cube with front-lower-left corner and size
@@ -77,6 +77,8 @@ namespace ParadOPTIx {
 	 * creates module, pipeline, programs, SBT, etc
 	 */
 	Renderer::Renderer(const TriangleMesh &model)
+		:
+		model(model)
 	{
 		initOptix();
 
@@ -475,7 +477,9 @@ namespace ParadOPTIx {
 			int objectType = 0;
 			HitgroupRecord rec;
 			OPTIX_CHECK(optixSbtRecordPackHeader(hitgroupPGs[objectType], &rec));
-			rec.objectID = i;
+			rec.data.vertex = (vec3f*)vertexBuffer.d_pointer();
+			rec.data.index  = (vec3i*)indexBuffer.d_pointer();
+			rec.data.color  = model.color;
 			hitgroupRecords.push_back(rec);
 		}
 		hitgroupRecordsBuffer.alloc_and_upload(hitgroupRecords);

@@ -5,6 +5,13 @@
 namespace ParadOPTIx {
 	using namespace gdt;
 
+	struct TriangleMeshSBTData
+	{
+		vec3f color;
+		vec3f* vertex;
+		vec3i* index;
+	};
+
 	struct LaunchParams
 	{
 	
