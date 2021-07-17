@@ -11,8 +11,7 @@ add_executable(ParadOPTIx
   Renderer.h
   Renderer.cpp
   main.cpp
-  LaunchParams.h
-  )
+)
 target_link_libraries(ParadOPTIx
   gdt
   # optix dependencies for rendering

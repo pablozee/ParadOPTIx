@@ -5,11 +5,4 @@ c:\dev\paradoptix\paradoptix\deviceprograms.cu(14): warning : extern declaration
   deviceprograms.cu
   compiling (and embedding ptx from) devicePrograms.cu
   cuda_compile_ptx_1_generated_devicePrograms.cu.ptx_embedded.c
-  Renderer.cpp
-C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.3.0\include\optix_stubs.h(83,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.3.0\include\optix_stubs.h(84,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.3.0\include\optix_stubs.h(157,9): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\ProgramData\NVIDIA Corporation\OptiX SDK 7.3.0\include\optix_stubs.h(158,9): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\dev\ParadOPTIx\ParadOPTIx\Renderer.cpp(534,38): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-     Creating library C:/dev/ParadOPTIx/build/Debug/ParadOPTIx.lib and object C:/dev/ParadOPTIx/build/Debug/ParadOPTIx.exp
   ParadOPTIx.vcxproj -> C:\dev\ParadOPTIx\build\Debug\ParadOPTIx.exe
