@@ -9,7 +9,7 @@ namespace ParadOPTIx {
 	struct RendererWindow : public GLFCameraWindow
 	{
 		RendererWindow(const std::string& title,
-					   const TriangleMesh &model,
+					   const std::vector<TriangleMesh> &model,
 					   const Camera &camera,
 					   const float worldScale)
 			:
@@ -97,15 +97,15 @@ namespace ParadOPTIx {
 	extern "C" int main(int ac, char** av)
 	{
 		try {
-			TriangleMesh model;
+			std::vector<TriangleMesh> model(2);
 			
 			// Ground plane
-			model.addCube(vec3f(0.f, -1.5f, 0.f), vec3f(10.f, .1f, 10.f));
+			model[0].color = vec3f(0.f, 1.f, 0.f);
+			model[0].addCube(vec3f(0.f, -1.5f, 0.f), vec3f(10.f, .1f, 10.f));
 
 			// Unit cube centred on top of group plane
-			model.addCube(vec3f(0.f, 0.f, 0.f), vec3f(2.f, 2.f, 2.f));
-
-			model.color = vec3f(.2f, .8f, .2f);
+			model[1].color = vec3f(0.f, 1.f, 1.f);
+			model[1].addCube(vec3f(0.f, 0.f, 0.f), vec3f(2.f, 2.f, 2.f));
 
 			Camera camera = {/*from*/ vec3f(-10.f, 2.f, -12.f),
 							 /* at */ vec3f(0.f, 0.f, 0.f),

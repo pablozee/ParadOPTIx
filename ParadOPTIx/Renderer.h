@@ -43,7 +43,7 @@ namespace ParadOPTIx {
 		 * Constructor - performs all setup, including initializing
 		 * optix, creates module, pipeline, programs, SBT, etc
 		 */
-		Renderer(const TriangleMesh &model);
+		Renderer(const std::vector<TriangleMesh>& meshes);
 
 		// Render one frame
 		void render();
@@ -89,7 +89,7 @@ namespace ParadOPTIx {
 		void buildSBT();
 
 		// Build an acceleration structure for the given triangle mesh
-		OptixTraversableHandle buildAccel(const TriangleMesh& model);
+		OptixTraversableHandle buildAccel();
 
 		/**
 		 * CUDA device context and stream that optix pipeline will run on,
@@ -137,9 +137,9 @@ namespace ParadOPTIx {
 		Camera lastSetCamera;
 
 		// The model we are going to trace rays against
-		const TriangleMesh model;
-		CUDABuffer vertexBuffer;
-		CUDABuffer indexBuffer;
+		std::vector<TriangleMesh> meshes;
+		std::vector <CUDABuffer> vertexBuffer;
+		std::vector <CUDABuffer> indexBuffer;
 		// Buffer that keeps the final, compacted acceleration structure
 		CUDABuffer asBuffer;
 	};

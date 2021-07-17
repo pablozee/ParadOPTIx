@@ -76,9 +76,9 @@ namespace ParadOPTIx {
 	 * Constructor - performs all setup, including initializing optix,
 	 * creates module, pipeline, programs, SBT, etc
 	 */
-	Renderer::Renderer(const TriangleMesh &model)
+	Renderer::Renderer(const std::vector<TriangleMesh> &meshes)
 		:
-		model(model)
+		meshes(meshes)
 	{
 		initOptix();
 
@@ -97,7 +97,7 @@ namespace ParadOPTIx {
 		std::cout << "#ParadOPTIx: creating hitgroup programs ..." << std::endl;
 		createHitgroupPrograms();
 
-		launchParams.traversable = buildAccel(model);
+		launchParams.traversable = buildAccel();
 
 		std::cout << "#ParadOPTIx: setting up OptiX pipeline ..." << std::endl;
 		createPipeline();
@@ -114,41 +114,53 @@ namespace ParadOPTIx {
 		std::cout << GDT_TERMINAL_DEFAULT;
 	}
 
-	OptixTraversableHandle Renderer::buildAccel(const TriangleMesh& model)
+	OptixTraversableHandle Renderer::buildAccel()
 	{
-		// Upload the model to the device: the builder
-		vertexBuffer.alloc_and_upload(model.vertex);
-		indexBuffer.alloc_and_upload(model.index);
+		vertexBuffer.resize(meshes.size());
+		indexBuffer.resize(meshes.size());
 
 		OptixTraversableHandle asHandle{ 0 };
 
 		// Triangle inputs
-		OptixBuildInput triangleInput = {};
-		triangleInput.type = OPTIX_BUILD_INPUT_TYPE_TRIANGLES;
+		std::vector<OptixBuildInput> triangleInput(meshes.size());
+		std::vector<CUdeviceptr> d_vertices(meshes.size());
+		std::vector<CUdeviceptr> d_indices(meshes.size());
+		std::vector<uint32_t> triangleInputFlags(meshes.size());
 
-		// Create local variables because we need a pointer to the
-		// device pointers
-		CUdeviceptr d_vertices = vertexBuffer.d_pointer();
-		CUdeviceptr d_indices= indexBuffer.d_pointer();
+		for (int meshID = 0; meshID < meshes.size(); meshID++)
+		{
+			// Upload the model to the device: the builder
+			TriangleMesh& model = meshes[meshID];
+			vertexBuffer[meshID].alloc_and_upload(model.vertex);
+			indexBuffer[meshID].alloc_and_upload(model.index);
 
-		triangleInput.triangleArray.vertexFormat = OPTIX_VERTEX_FORMAT_FLOAT3;
-		triangleInput.triangleArray.vertexStrideInBytes = sizeof(vec3f);
-		triangleInput.triangleArray.numVertices = (int)model.vertex.size();
-		triangleInput.triangleArray.vertexBuffers = &d_vertices;
+			triangleInput[meshID] = {};
+			triangleInput[meshID].type = OPTIX_BUILD_INPUT_TYPE_TRIANGLES;
 
-		triangleInput.triangleArray.indexFormat = OPTIX_INDICES_FORMAT_UNSIGNED_INT3;
-		triangleInput.triangleArray.indexStrideInBytes = sizeof(vec3i);
-		triangleInput.triangleArray.numIndexTriplets = (int)model.index.size();
-		triangleInput.triangleArray.indexBuffer = d_indices;
+			// Create local variables because we need a pointer to the
+			// device pointers
+			d_vertices[meshID] = vertexBuffer[meshID].d_pointer();
+			d_indices[meshID] = indexBuffer[meshID].d_pointer();
 
-		uint32_t triangleInputFlags[1] = { 0 };
+			triangleInput[meshID].triangleArray.vertexFormat = OPTIX_VERTEX_FORMAT_FLOAT3;
+			triangleInput[meshID].triangleArray.vertexStrideInBytes = sizeof(vec3f);
+			triangleInput[meshID].triangleArray.numVertices = (int)model.vertex.size();
+			triangleInput[meshID].triangleArray.vertexBuffers = &d_vertices[meshID];
 
-		// In this example we have one SBT entry and no per primitive materials
-		triangleInput.triangleArray.flags							= triangleInputFlags;
-		triangleInput.triangleArray.numSbtRecords					= 1;
-		triangleInput.triangleArray.sbtIndexOffsetBuffer			= 0;
-		triangleInput.triangleArray.sbtIndexOffsetSizeInBytes		= 0;
-		triangleInput.triangleArray.sbtIndexOffsetStrideInBytes		= 0;
+			triangleInput[meshID].triangleArray.indexFormat = OPTIX_INDICES_FORMAT_UNSIGNED_INT3;
+			triangleInput[meshID].triangleArray.indexStrideInBytes = sizeof(vec3i);
+			triangleInput[meshID].triangleArray.numIndexTriplets = (int)model.index.size();
+			triangleInput[meshID].triangleArray.indexBuffer = d_indices[meshID];
+
+			triangleInputFlags[meshID] = 0;
+
+			// In this example we have one SBT entry and no per primitive materials
+			triangleInput[meshID].triangleArray.flags							= &triangleInputFlags[meshID];
+			triangleInput[meshID].triangleArray.numSbtRecords					= 1;
+			triangleInput[meshID].triangleArray.sbtIndexOffsetBuffer			= 0;
+			triangleInput[meshID].triangleArray.sbtIndexOffsetSizeInBytes		= 0;
+			triangleInput[meshID].triangleArray.sbtIndexOffsetStrideInBytes		= 0;
+		}
 
 		// BLAS Setup
 
@@ -160,8 +172,8 @@ namespace ParadOPTIx {
 		OptixAccelBufferSizes blasBufferSizes;
 		OPTIX_CHECK(optixAccelComputeMemoryUsage(optixContext,
 												 &accelOptions,
-												 &triangleInput,
-												 1, // num build inputs.
+												 triangleInput.data(),
+												 (int)meshes.size(), // num build inputs.
 												 &blasBufferSizes
 												));
 
@@ -185,8 +197,8 @@ namespace ParadOPTIx {
 		OPTIX_CHECK(optixAccelBuild(optixContext,
 									0,
 									&accelOptions,
-									&triangleInput,
-									1,
+									triangleInput.data(),
+									(int)meshes.size(),
 									tempBuffer.d_pointer(),
 									tempBuffer.sizeInBytes,
 									outputBuffer.d_pointer(),
@@ -468,18 +480,20 @@ namespace ParadOPTIx {
 		sbt.missRecordCount				= (int)missRecords.size();
 
 		// Build hitgroup records
-		int numObjects = 1;
+		int numObjects = (int)meshes.size();
 
 		std::vector<HitgroupRecord> hitgroupRecords;
 
-		for (int i = 0; i < numObjects; i++)
+		for (int meshID = 0; meshID < numObjects; meshID++)
 		{
-			int objectType = 0;
 			HitgroupRecord rec;
-			OPTIX_CHECK(optixSbtRecordPackHeader(hitgroupPGs[objectType], &rec));
-			rec.data.vertex = (vec3f*)vertexBuffer.d_pointer();
-			rec.data.index  = (vec3i*)indexBuffer.d_pointer();
-			rec.data.color  = model.color;
+
+			// All meshes use the same code, so all same hitgroup
+
+			OPTIX_CHECK(optixSbtRecordPackHeader(hitgroupPGs[0], &rec));
+			rec.data.color  = meshes[meshID].color;
+			rec.data.vertex = (vec3f*)vertexBuffer[meshID].d_pointer();
+			rec.data.index  = (vec3i*)indexBuffer[meshID].d_pointer();
 			hitgroupRecords.push_back(rec);
 		}
 		hitgroupRecordsBuffer.alloc_and_upload(hitgroupRecords);
