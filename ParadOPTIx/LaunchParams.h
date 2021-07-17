@@ -7,15 +7,16 @@ namespace ParadOPTIx {
 
 	struct LaunchParams
 	{
+	
 		struct 
 		{
 			uint32_t*	colorBuffer;
 			vec2i		size;
 		} frame;
 
-		struct 
+		struct
 		{
-			vec3f positon;
+			vec3f position;
 			vec3f direction;
 			vec3f horizontal;
 			vec3f vertical;

@@ -488,10 +488,9 @@ namespace ParadOPTIx {
 	void Renderer::render()
 	{
 		// Sanity check - make sure we launch only after first resize is done
-		if (launchParams.fbSize.x == 0) return;
+		if (launchParams.frame.size.x == 0) return;
 
 		launchParamsBuffer.upload(&launchParams, 1);
-		launchParams.frameID++;
 
 		OPTIX_CHECK(optixLaunch(
 								// Pipeline we're launching
@@ -502,8 +501,8 @@ namespace ParadOPTIx {
 								launchParamsBuffer.sizeInBytes,
 								&sbt,
 								// Dimensions of the launch
-								launchParams.fbSize.x,
-								launchParams.fbSize.y,
+								launchParams.frame.size.x,
+								launchParams.frame.size.y,
 								1
 							  ));
 
@@ -518,7 +517,7 @@ namespace ParadOPTIx {
 	void Renderer::setCamera(const Camera& camera)
 	{
 		lastSetCamera = camera;
-		launchParams.camera.positon = camera.from;
+		launchParams.camera.position = camera.from;
 		launchParams.camera.direction = normalize(camera.at - camera.from);
 		const float cosFovy = 0.66f;
 		const float aspect = launchParams.frame.size.x / float(launchParams.frame.size.y);
@@ -538,13 +537,13 @@ namespace ParadOPTIx {
 		colorBuffer.resize(newSize.x * newSize.y * sizeof(uint32_t));
 
 		// Update the launch parameters that we'll pass to the optix launch
-		launchParams.fbSize			= newSize;
-		launchParams.colorBuffer	= (uint32_t*)colorBuffer.d_ptr;
+		launchParams.frame.size			= newSize;
+		launchParams.frame.colorBuffer	= (uint32_t*)colorBuffer.d_ptr;
 	}
 
 	// Download the rendered color buffer
 	void Renderer::downloadPixels(uint32_t h_pixels[])
 	{
-		colorBuffer.download(h_pixels, launchParams.fbSize.x * launchParams.fbSize.y);
+		colorBuffer.download(h_pixels, launchParams.frame.size.x * launchParams.frame.size.y);
 	}
 }

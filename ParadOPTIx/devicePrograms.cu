@@ -110,8 +110,8 @@ namespace ParadOPTIx {
 		const uint32_t rgba = 0xff000000 | (r << 0) | (g << 8) | (b << 16);
 
 		// Write to frame buffer
-		const uint32_t fbIndex = ix + iy * optixLaunchParams.fbSize.x;
-		optixLaunchParams.colorBuffer[fbIndex] = rgba;
+		const uint32_t fbIndex = ix + iy * optixLaunchParams.frame.size.x;
+		optixLaunchParams.frame.colorBuffer[fbIndex] = rgba;
 	}
 
 }

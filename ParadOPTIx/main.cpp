@@ -6,17 +6,28 @@
 
 namespace ParadOPTIx {
 
-	struct RendererWindow : public GLFWindow
+	struct RendererWindow : public GLFCameraWindow
 	{
-		RendererWindow(const std::string& title)
+		RendererWindow(const std::string& title,
+					   const TriangleMesh &model,
+					   const Camera &camera,
+					   const float worldScale)
 			:
-			GLFWindow(title)
+			GLFCameraWindow(title, camera.from, camera.at, camera.up, worldScale),
+			renderer(model)
 		{
 
 		}
 
 		virtual void render() override 
 		{
+			if (cameraFrame.modified)
+			{
+				renderer.setCamera(Camera{ cameraFrame.get_from(),
+										   cameraFrame.get_at(),
+										   cameraFrame.get_up() });
+				cameraFrame.modified = false;
+			}
 			renderer.render();
 		}
 
@@ -86,7 +97,24 @@ namespace ParadOPTIx {
 	extern "C" int main(int ac, char** av)
 	{
 		try {
-			RendererWindow* window = new RendererWindow("ParadOPTIx");
+			TriangleMesh model;
+			
+			// Ground plane
+			model.addCube(vec3f(0.f, -1.5f, 0.f), vec3f(10.f, .1f, 10.f));
+
+			// Unit cube centred on top of group plane
+			model.addCube(vec3f(0.f, 0.f, 0.f), vec3f(2.f, 2.f, 2.f));
+
+			Camera camera = {/*from*/ vec3f(-10.f, 2.f, -12.f),
+							 /* at */ vec3f(0.f, 0.f, 0.f),
+							 /* up */ vec3f(0.f, 1.f, 0.f) };
+
+			// An amount approximating the scale of the world,
+			// so the camera knows how much to move for any given
+			// user interaction
+			const float worldScale = 10.f;
+			
+			RendererWindow* window = new RendererWindow("ParadOPTIx", model, camera, worldScale);
 			window->run();
 		}
 		catch (std::runtime_error& e) {
