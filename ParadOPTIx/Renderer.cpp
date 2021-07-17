@@ -95,6 +95,8 @@ namespace ParadOPTIx {
 		std::cout << "#ParadOPTIx: creating hitgroup programs ..." << std::endl;
 		createHitgroupPrograms();
 
+		launchParams.traversable = buildAccel(model);
+
 		std::cout << "#ParadOPTIx: setting up OptiX pipeline ..." << std::endl;
 		createPipeline();
 
@@ -109,6 +111,117 @@ namespace ParadOPTIx {
 		std::cout << "#ParadOPTIx: OptiX 7 all set up" << std::endl;
 		std::cout << GDT_TERMINAL_DEFAULT;
 	}
+
+	OptixTraversableHandle Renderer::buildAccel(const TriangleMesh& model)
+	{
+		// Upload the model to the device: the builder
+		vertexBuffer.alloc_and_upload(model.vertex);
+		indexBuffer.alloc_and_upload(model.index);
+
+		OptixTraversableHandle asHandle{ 0 };
+
+		// Triangle inputs
+		OptixBuildInput triangleInput = {};
+		triangleInput.type = OPTIX_BUILD_INPUT_TYPE_TRIANGLES;
+
+		// Create local variables because we need a pointer to the
+		// device pointers
+		CUdeviceptr d_vertices = vertexBuffer.d_pointer();
+		CUdeviceptr d_indices= indexBuffer.d_pointer();
+
+		triangleInput.triangleArray.vertexFormat = OPTIX_VERTEX_FORMAT_FLOAT3;
+		triangleInput.triangleArray.vertexStrideInBytes = sizeof(vec3f);
+		triangleInput.triangleArray.numVertices = (int)model.vertex.size();
+		triangleInput.triangleArray.vertexBuffers = &d_vertices;
+
+		triangleInput.triangleArray.indexFormat = OPTIX_INDICES_FORMAT_UNSIGNED_INT3;
+		triangleInput.triangleArray.indexStrideInBytes = sizeof(vec3i);
+		triangleInput.triangleArray.numIndexTriplets = (int)model.index.size();
+		triangleInput.triangleArray.indexBuffer = d_indices;
+
+		uint32_t triangleInputFlags[1] = { 0 };
+
+		// In this example we have one SBT entry and no per primitive materials
+		triangleInput.triangleArray.flags							= triangleInputFlags;
+		triangleInput.triangleArray.numSbtRecords					= 1;
+		triangleInput.triangleArray.sbtIndexOffsetBuffer			= 0;
+		triangleInput.triangleArray.sbtIndexOffsetSizeInBytes		= 0;
+		triangleInput.triangleArray.sbtIndexOffsetStrideInBytes		= 0;
+
+		// BLAS Setup
+
+		OptixAccelBuildOptions accelOptions = {};
+		accelOptions.buildFlags				= OPTIX_BUILD_FLAG_NONE | OPTIX_BUILD_FLAG_ALLOW_COMPACTION;
+		accelOptions.motionOptions.numKeys  = 1;
+		accelOptions.operation				= OPTIX_BUILD_OPERATION_BUILD;
+
+		OptixAccelBufferSizes blasBufferSizes;
+		OPTIX_CHECK(optixAccelComputeMemoryUsage(optixContext,
+												 &accelOptions,
+												 &triangleInput,
+												 1, // num build inputs.
+												 &blasBufferSizes
+												));
+
+		// Prepare compaction
+
+		CUDABuffer compactedSizeBuffer;
+		compactedSizeBuffer.alloc(sizeof(uint64_t));
+
+		OptixAccelEmitDesc emitDesc;
+		emitDesc.type	= OPTIX_PROPERTY_TYPE_COMPACTED_SIZE;
+		emitDesc.result = compactedSizeBuffer.d_pointer();
+
+		// Execute build (main stage)
+
+		CUDABuffer tempBuffer;
+		tempBuffer.alloc(blasBufferSizes.tempSizeInBytes);
+
+		CUDABuffer outputBuffer;
+		outputBuffer.alloc(blasBufferSizes.outputSizeInBytes);
+
+		OPTIX_CHECK(optixAccelBuild(optixContext,
+									0,
+									&accelOptions,
+									&triangleInput,
+									1,
+									tempBuffer.d_pointer(),
+									tempBuffer.sizeInBytes,
+									outputBuffer.d_pointer(),
+									outputBuffer.sizeInBytes,
+									&asHandle,
+									&emitDesc,
+									1
+								  ));
+
+		CUDA_SYNC_CHECK();
+
+		// Perform compaction
+
+		uint64_t compactedSize;
+		compactedSizeBuffer.download(&compactedSize, 1);
+
+		asBuffer.alloc(compactedSize);
+		OPTIX_CHECK(optixAccelCompact(optixContext, 
+									  0, 
+									  asHandle, 
+									  asBuffer.d_pointer(), 
+									  asBuffer.sizeInBytes, 
+									  &asHandle
+									));
+
+		CUDA_SYNC_CHECK();
+
+		// Clean up
+		outputBuffer.free(); // The uncompacted, temporary output buffer
+		tempBuffer.free();
+		compactedSizeBuffer.free();
+
+		return asHandle;
+
+
+	}
+
 
 	// Helper function that initializes optix and checks for errors
 	void Renderer::initOptix()
