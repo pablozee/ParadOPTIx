@@ -10,6 +10,7 @@ add_executable(ParadOPTIx
   CUDABuffer.h
   Renderer.h
   Renderer.cpp
+  Model.cpp
   main.cpp
 )
 target_link_libraries(ParadOPTIx

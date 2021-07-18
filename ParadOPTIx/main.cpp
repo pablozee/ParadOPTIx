@@ -9,7 +9,7 @@ namespace ParadOPTIx {
 	struct RendererWindow : public GLFCameraWindow
 	{
 		RendererWindow(const std::string& title,
-					   const std::vector<TriangleMesh> &model,
+					   const Model* model,
 					   const Camera &camera,
 					   const float worldScale)
 			:
@@ -97,24 +97,18 @@ namespace ParadOPTIx {
 	extern "C" int main(int ac, char** av)
 	{
 		try {
-			std::vector<TriangleMesh> model(2);
-			
-			// Ground plane
-			model[0].color = vec3f(0.f, 1.f, 0.f);
-			model[0].addCube(vec3f(0.f, -1.5f, 0.f), vec3f(10.f, .1f, 10.f));
+			Model* model = loadOBJ(
+				"../../models/sponza.obj"
+			);
 
-			// Unit cube centred on top of group plane
-			model[1].color = vec3f(0.f, 1.f, 1.f);
-			model[1].addCube(vec3f(0.f, 0.f, 0.f), vec3f(2.f, 2.f, 2.f));
-
-			Camera camera = {/*from*/ vec3f(-10.f, 2.f, -12.f),
-							 /* at */ vec3f(0.f, 0.f, 0.f),
+			Camera camera = {/*from*/ vec3f(-1293.07f, 154.681f, -0.7304f),
+							 /* at */ model->bounds.center() - vec3f(0,400,0),
 							 /* up */ vec3f(0.f, 1.f, 0.f) };
 
 			// An amount approximating the scale of the world,
 			// so the camera knows how much to move for any given
 			// user interaction
-			const float worldScale = 10.f;
+			const float worldScale = length(model->bounds.span());
 			
 			RendererWindow* window = new RendererWindow("ParadOPTIx", model, camera, worldScale);
 			window->run();

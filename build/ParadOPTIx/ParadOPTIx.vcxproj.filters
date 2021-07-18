@@ -7,6 +7,9 @@
     <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

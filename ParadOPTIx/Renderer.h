@@ -1,7 +1,7 @@
 #pragma once
 #include "CUDABuffer.h"
 #include "LaunchParams.h"
-#include "gdt/math/AffineSpace.h"
+#include "Model.h"
 
 using namespace ParadOPTIx;
 
@@ -12,21 +12,6 @@ namespace ParadOPTIx {
 		vec3f from;
 		vec3f at;
 		vec3f up;
-	};
-
-	// A simple indexed triangle mesh that our renderer will render
-	struct TriangleMesh
-	{
-		// Add a unit cube subject to given xfm matrix to the current 
-		// triangleMesh
-		void addUnitCube(const affine3f& xfm);
-
-		// Add aligned cube with front-lower-left corner and size
-		void addCube(const vec3f& center, const vec3f& size);
-
-		std::vector<vec3f> vertex;
-		std::vector<vec3i> index;
-		vec3f			   color;
 	};
 
 	/**
@@ -43,7 +28,7 @@ namespace ParadOPTIx {
 		 * Constructor - performs all setup, including initializing
 		 * optix, creates module, pipeline, programs, SBT, etc
 		 */
-		Renderer(const std::vector<TriangleMesh>& meshes);
+		Renderer(const Model *model);
 
 		// Render one frame
 		void render();
@@ -137,7 +122,9 @@ namespace ParadOPTIx {
 		Camera lastSetCamera;
 
 		// The model we are going to trace rays against
-		std::vector<TriangleMesh> meshes;
+		const Model* model;
+		
+		// One buffer per input mesh
 		std::vector <CUDABuffer> vertexBuffer;
 		std::vector <CUDABuffer> indexBuffer;
 		// Buffer that keeps the final, compacted acceleration structure

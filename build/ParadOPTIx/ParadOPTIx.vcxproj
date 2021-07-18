@@ -249,6 +249,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\dev\ParadOPTIx\ParadOPTIx\CUDABuffer.h" />
     <ClInclude Include="C:\dev\ParadOPTIx\ParadOPTIx\Renderer.h" />
     <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\Renderer.cpp" />
+    <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\Model.cpp" />
     <ClCompile Include="C:\dev\ParadOPTIx\ParadOPTIx\main.cpp" />
   </ItemGroup>
   <ItemGroup>
